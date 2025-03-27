@@ -2,8 +2,12 @@
   "version": 2,
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/api/track.js"
+      "src": "/api/.*",
+      "dest": "/api/$1.js"
+    },
+    {
+      "src": "/.*",
+      "dest": "/public/tracker.html"
     }
   ]
 }
